@@ -1,7 +1,7 @@
-import glob
-import numpy as np
 import torch
 import os
+import csv
+import pandas as pd
 from PIL import Image
 from torchvision import transforms
 from torch.utils.data.dataset import Dataset
@@ -9,51 +9,54 @@ from torch.utils.data.dataset import Dataset
 
 #pytorch Dataset class to load provided data
 class FashionDataset(Dataset):
-	def __init__(self, data_dir, csv_path, transform=None):
-		self.root_dir = data_dir
-		self.image_names = glob.glob(data_dir+"*.jpg")
-		self.image_names_base = [os.path.basename(i) for i in self.image_names]
-		# print(self.image_names_base)
-		self.txt_names = [i[:-4] + '.txt' for i in self.image_names_base]
-		self.labels = torch.FloatTensor(self.generate_labels())
-		# print(self.labels)
-		self.labels_s = self.labels[:,0]
-		self.labels_c = self.labels[:,1]
-		self.labels_t = self.labels[:,2]
-		self.transform = transform
-		self.shape = shape
+    def __init__(self, data_dir, csv_path, transform=None):
+        """
+        Arguments:
+            - data_dir : path to folder containing csv files and "images" folder
+            - csv_path : path to csv file (i.e test_set.csv)
+            - transform : (optional)
+        """
+        self.data = pd.read_csv(os.path.join(data_dir, csv_path))
+        # generate images names before hand as some images are not there in the folder
+        self.generate_image_list(data_dir)
+        self.transform = transform
+        self.data_dir = data_dir
 
-	def __getitem__(self, index):
-		self.image = Image.open(self.image_names[index])
-		#uncomment following line to read image in grayscale
-		# self.image = Image.open(self.image_names[index]).convert('L')
-		if self.shape == 's':
-			self.label = self.labels_s[index]
-		elif self.shape == 'c':
-			self.label = self.labels_c[index]
-		elif self.shape == 't':
-			self.label = self.labels_t[index]
-		else:
-			self.label = self.labels[index]
-		if self.transform:
-			self.image = self.transform(self.image)
-		return (self.image, self.label)
+    def __getitem__(self, index):
+        image = Image.open(os.path.join(self.data_dir, "images", str(self.data.iloc[index]['id'])+".jpg"))
+        #uncomment following line to read image in grayscale
+        # self.image = Image.open(self.image_names[index]).convert('L')
+        
+        if self.transform:
+            image = self.transform(image)
+        return (image, self.label_map[self.data.iloc[index]['articleType']])
 
-	def __len__(self):
-		return len(self.image_names)
+    def __len__(self):
+        return len(self.data)
+
+    def generate_image_list(self,data_dir):
+        self.label_map = {}
+        i = 0
+        for indx, img_path in self.data.iterrows():
+            path = os.path.join(DATA_DIR, "images", str(img_path['id'])+".jpg")
+            if not os.path.exists(path):
+                self.data.drop(indx, inplace=True)
+            if img_path['articleType'] not in self.label_map:
+                self.label_map[img_path['articleType']] = i
+                i += 1
+        print("Found {} images in {} for provided csv file.".format(len(self.data), data_dir))
+
 
 
 
 # for testing purpose
-
 if __name__ == "__main__":
-	data_loader = FashionDataset("training_data/", transform=transforms.Compose([transforms.Resize((280,280)), transforms.ToTensor()]))
-	i = 0
-	for img, label in data_loader:
-		print(label)
-		d = transforms.ToPILImage()(img)
-		i += 1
-		if i == 134:
-			d.show()
-			break
-		# break
+    data_loader = FashionDataset(DATA_DIR, "remainingclasses_set.csv", transform=transforms.Compose([transforms.Resize((280,280)), transforms.ToTensor()]))
+    i = 0
+    for img, label in data_loader:
+        print(label)
+        d = transforms.ToPILImage()(img)
+        i += 1
+        if i == 10:
+            d.show()
+            break
