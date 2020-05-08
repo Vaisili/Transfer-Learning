@@ -20,6 +20,5 @@ class ResNetFashion(nn.Module):
 
 	def forward(self, x):
 		x = self.base(x)
-		print(x.size())
 		x = self.fc(x)
 		return x

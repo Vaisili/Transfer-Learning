@@ -7,9 +7,12 @@ import argparse
 from model import ResNetFashion
 from data_loader import FashionDataset
 from parameters import Args
+import os
 
 
 def save_model_fn(epoch, model, optimizer, name):
+	
+
 	#save the model
 	state = {
 	    'epoch': epoch,
@@ -42,10 +45,9 @@ def train_model():
 		model.load_state_dict(cp['state_dict'])
 		optimizer.load_state_dict(cp['optimizer'])
 	
-	if not os.path.exists(Args.output_dir):
-		os.mkdir(Args.output_dir)
+	
 
-	for epoch in range(epochs):
+	for epoch in range(Args.epochs):
 		total_loss = 0.0
 		for i, (data, target) in enumerate(dataset_loader):
 			
@@ -59,8 +61,8 @@ def train_model():
 			optimizer.step()
 			total_loss += loss.item()
 			print("Epoch: {} Minibatch:{} Loss: {}".format(epoch, i, loss.item()))
-			if i % 100 == 0:  #print loss after every 100 mini batches
-				print("100 Batch Loss:{}".format(total_loss/100))
+			if i % Args.avg_loss_batch == 0 and i != 0:  #print loss after every 100 mini batches
+				print("Avg loss over last {} batches: {}".format(total_loss/Args.avg_loss_batch))
 				total_loss= 0.0
 
 		if save_model:
