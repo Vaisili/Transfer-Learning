@@ -5,7 +5,7 @@
 import os
 
 class Args:
-	batch_size = 2
+	batch_size = 16
 	data_dir = "D:\\Projects\\Datasets\\fashion-larger"
 	train_csv = "top20classes_set.csv"
 	learning_rate = 0.0003
@@ -15,7 +15,7 @@ class Args:
 	checkpoint = None
 	# save model after every X epochs
 	save_model = 1
-	output_dir = "D:\\Projects\\Dataset\\fashion-larger\\model_output"
+	output_dir = "D:\\Projects\\Datasets\\fashion-larger\\model_output"
 	base_model = "resnet50"
 	num_classes = 20  # top 20 classes
 	# calculate avg loss for X minibatches

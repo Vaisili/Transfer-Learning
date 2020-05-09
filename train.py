@@ -62,10 +62,10 @@ def train_model():
 			total_loss += loss.item()
 			print("Epoch: {} Minibatch:{} Loss: {}".format(epoch, i, loss.item()))
 			if i % Args.avg_loss_batch == 0 and i != 0:  #print loss after every 100 mini batches
-				print("Avg loss over last {} batches: {}".format(total_loss/Args.avg_loss_batch))
+				print("Avg loss over last {} batches: {}".format(Args.avg_loss_batch, total_loss/Args.avg_loss_batch))
 				total_loss= 0.0
 
-		if save_model:
+		if Args.save_model!= None and epoch == Args.save_model:
 			name = os.path.join(Args.output_dir, "fashion-"+str(epoch)+".pth")
 			save_model_fn(epoch, model, optimizer, name)
 
