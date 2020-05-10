@@ -100,7 +100,7 @@ def train_model():
 				total_loss= 0.0
 
 		if Args.save_model!= None and epoch % Args.save_model==0:
-			name = os.path.join(Args.output_dir, "fashion-"+str(epoch)+".pth")
+			name = os.path.join(Args.output_dir, Args.name, "fashion-"+str(epoch)+".pth")
 			save_model_fn(epoch, model, optimizer, name)
 
 
