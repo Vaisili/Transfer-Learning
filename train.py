@@ -24,6 +24,17 @@ def save_model_fn(epoch, model, optimizer, name):
 	print("Model- {} saved successfully".format(name))
 
 
+def get_class_weights(label_map, class_distribution, scheme):
+	print("Calculating weights for classes...")
+	# print(class_distribution)
+	if scheme == 1:
+		weights = [1/class_distribution[i] for i in label_map]
+	elif scheme == 2:
+		max_dist = max(class_distribution.values())
+		weights = [max_dist/class_distribution[i] for i in label_map]
+	# print(weights)
+	return weights
+
 def oversample(data):
 	indices = list(range(len(data)))
 
@@ -51,11 +62,19 @@ def train_model():
 	if cuda:
 		model.cuda()
 
-	criterion = nn.CrossEntropyLoss()
+	if Args.weighted_loss and not Args.oversample:
+		weights = get_class_weights(data.label_map, data.class_distribution, Args.weighted_loss_scheme)
+		class_weights = torch.FloatTensor(weights)
+		# if cuda:
+			# class_weight.to('cuda')
+		criterion = nn.CrossEntropyLoss(weight=class_weights.cuda())
+	else:
+		criterion = nn.CrossEntropyLoss()
 	optimizer = optim.SGD(model.parameters(), lr=Args.learning_rate, momentum=Args.momentum)  
 	#optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 	if Args.checkpoint != None:
+		print("restoring from checkpoint ", Args.checkpoint)
 		cp = torch.load(Args.checkpoint)
 		model.load_state_dict(cp['state_dict'])
 		optimizer.load_state_dict(cp['optimizer'])
@@ -80,7 +99,7 @@ def train_model():
 				print("Avg loss over last {} batches: {}".format(Args.avg_loss_batch, total_loss/Args.avg_loss_batch))
 				total_loss= 0.0
 
-		if Args.save_model!= None and epoch == Args.save_model:
+		if Args.save_model!= None and epoch % Args.save_model==0:
 			name = os.path.join(Args.output_dir, "fashion-"+str(epoch)+".pth")
 			save_model_fn(epoch, model, optimizer, name)
 
