@@ -12,7 +12,7 @@ from torch.utils.tensorboard import SummaryWriter
 
 
 
-def save_model_fn(epoch, model, optimizer, name):
+def save_model_fn(epoch, model, optimizer, name, label_map):
 	
 
 	#save the model
@@ -20,6 +20,7 @@ def save_model_fn(epoch, model, optimizer, name):
 	    'epoch': epoch,
 	    'state_dict': model.state_dict(),
 	    'optimizer': optimizer.state_dict(),
+	    'label_map':label_map,
 	}
 
 	torch.save(state, name)
@@ -116,7 +117,7 @@ def train_model():
 
 		if Args.save_model!= None and epoch % Args.save_model==0:
 			name = os.path.join(Args.output_dir, Args.name, "fashion-"+str(epoch)+".pth")
-			save_model_fn(epoch, model, optimizer, name)
+			save_model_fn(epoch, model, optimizer, name, data.label_map)
 
 
 if __name__ == "__main__":

@@ -53,13 +53,13 @@ class FashionDataset(Dataset):
                 self.class_distribution[img_path['articleType']] += 1
         print("Found {} images in {} for provided csv file.".format(len(self.data), data_dir))
         print("Total classes: {}".format(len(self.label_map)))
-        # print(self.label_map)
+        print(self.label_map)
 
 
 
 # for testing purpose
 if __name__ == "__main__":
-    data_loader = FashionDataset("D:\\Projects\\Datasets\\fashion-product-images", "remainingclasses_set.csv", transform=transforms.Compose([transforms.Resize((224,224)), transforms.ToTensor()]))
+    data_loader = FashionDataset("D:\\Projects\\Datasets\\fashion-product-images", "top20classes_set.csv", transform=transforms.Compose([transforms.Resize((224,224)), transforms.ToTensor()]))
     i = 0
     print(len(data_loader))
     dataset_loader = torch.utils.data.DataLoader(dataset=data_loader, batch_size=16, shuffle=True)

@@ -11,15 +11,15 @@ class Args:
 	batch_size = 16
 	data_dir = "D:\\Projects\\Datasets\\fashion-larger"
 	train_csv = "top20classes_set.csv"
-	learning_rate = 0.001
+	learning_rate = 0.0007
 	momentum = 0.9
-	epochs = 25
+	epochs = 5
 	optimizer = "sgd"
 	# checkpoint to start training from
 	# checkpoint = "D:\\Projects\\Datasets\\fashion-larger\\model_output\\fashion-9.pth"
 	checkpoint = None
 	# save model after every X epochs
-	save_model = 5
+	save_model = 1
 	output_dir = "D:\\Projects\\Datasets\\fashion-larger\\model_output"
 	base_model = "resnet50"
 	num_classes = 20  # top 20 classes
