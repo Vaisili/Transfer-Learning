@@ -38,6 +38,7 @@ class FashionDataset(Dataset):
 
     def generate_image_list(self,data_dir):
         self.label_map = {}
+        self.class_distribution = {}
         i = 0
         for indx, img_path in self.data.iterrows():
             path = os.path.join(self.data_dir, "images", str(img_path['id'])+".jpg")
@@ -46,15 +47,22 @@ class FashionDataset(Dataset):
             if img_path['articleType'] not in self.label_map:
                 self.label_map[img_path['articleType']] = i
                 i += 1
+            if img_path['articleType'] not in self.class_distribution:
+                self.class_distribution[img_path['articleType']] = 1
+            else:
+                self.class_distribution[img_path['articleType']] += 1
         print("Found {} images in {} for provided csv file.".format(len(self.data), data_dir))
         print("Total classes: {}".format(len(self.label_map)))
+        # print(self.label_map)
 
 
 
 # for testing purpose
 if __name__ == "__main__":
-    data_loader = FashionDataset("D:\\Projects\\Datasets\\fashion-product-images", "top20classes_set.csv", transform=transforms.Compose([transforms.Resize((224,224)), transforms.ToTensor()]))
+    data_loader = FashionDataset("D:\\Projects\\Datasets\\fashion-product-images", "remainingclasses_set.csv", transform=transforms.Compose([transforms.Resize((224,224)), transforms.ToTensor()]))
     i = 0
+    # print(list(range(len(data_loader))))
+    print(data_loader[0][1])
     for img, label in data_loader:
         d = transforms.ToPILImage()(img)
         i += 1

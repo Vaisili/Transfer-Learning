@@ -24,11 +24,26 @@ def save_model_fn(epoch, model, optimizer, name):
 	print("Model- {} saved successfully".format(name))
 
 
+def oversample(data):
+	indices = list(range(len(data)))
+
+	new_map = {value:key for (key,value) in data.label_map.items()}
+	# print(data.class_distribution)
+	# print([data.class_distribution[new_map[data[i][1]]] for i in indices][:10])
+	weights = [1.0/data.class_distribution[new_map[data[i][1]]] for i in indices]
+	# print(weights[:10])
+	return torch.utils.data.sampler.WeightedRandomSampler(weights, len(weights))
+
 def train_model():
 
 	transforms_ = transforms.Compose([transforms.Resize((224,224)), transforms.ToTensor()])
 	data = FashionDataset(Args.data_dir, Args.train_csv, transform=transforms_)
-	dataset_loader = torch.utils.data.DataLoader(dataset=data, batch_size=Args.batch_size, shuffle=False)
+	if Args.oversample:
+		print("Oversampling minority classes, this might take a while...")
+		sampler = oversample(data)
+		dataset_loader = torch.utils.data.DataLoader(dataset=data, batch_size=Args.batch_size, sampler=sampler)
+	else:
+		dataset_loader = torch.utils.data.DataLoader(dataset=data, batch_size=Args.batch_size, shuffle=True)
 	cuda = torch.cuda.is_available()
 	model = ResNetFashion(base=Args.base_model, num_classes=Args.num_classes)
 

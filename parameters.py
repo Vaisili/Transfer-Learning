@@ -7,7 +7,7 @@ import os
 class Args:
 	batch_size = 16
 	data_dir = "D:\\Projects\\Datasets\\fashion-larger"
-	train_csv = "top20classes_set.csv"
+	train_csv = "remainingclasses_set.csv"
 	learning_rate = 0.0003
 	momentum = 0.9
 	epochs = 2
@@ -20,6 +20,7 @@ class Args:
 	num_classes = 20  # top 20 classes
 	# calculate avg loss for X minibatches
 	avg_loss_batch = 100
+	oversample=True    #over sample to handle class imbalance
 
 	def __init__(self):
 		self.verify_args()
