@@ -61,6 +61,9 @@ class FashionDataset(Dataset):
 if __name__ == "__main__":
     data_loader = FashionDataset("D:\\Projects\\Datasets\\fashion-product-images", "remainingclasses_set.csv", transform=transforms.Compose([transforms.Resize((224,224)), transforms.ToTensor()]))
     i = 0
+    print(len(data_loader))
+    dataset_loader = torch.utils.data.DataLoader(dataset=data_loader, batch_size=16, shuffle=True)
+    print(len(dataset_loader))
     # print(list(range(len(data_loader))))
     print(data_loader[0][1])
     for img, label in data_loader:

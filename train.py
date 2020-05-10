@@ -8,6 +8,8 @@ from model import ResNetFashion
 from data_loader import FashionDataset
 from parameters import Args
 import os
+from torch.utils.tensorboard import SummaryWriter
+
 
 
 def save_model_fn(epoch, model, optimizer, name):
@@ -70,8 +72,10 @@ def train_model():
 		criterion = nn.CrossEntropyLoss(weight=class_weights.cuda())
 	else:
 		criterion = nn.CrossEntropyLoss()
-	optimizer = optim.SGD(model.parameters(), lr=Args.learning_rate, momentum=Args.momentum)  
-	#optimizer = optim.Adam(model.parameters(), lr=0.001)
+	if Args.optimizer == "sgd":
+		optimizer = optim.SGD(model.parameters(), lr=Args.learning_rate, momentum=Args.momentum)  
+	elif Args.optimizer == "adam":
+		optimizer = optim.Adam(model.parameters(), lr=Args.learning_rate)
 
 	if Args.checkpoint != None:
 		print("restoring from checkpoint ", Args.checkpoint)
@@ -79,10 +83,12 @@ def train_model():
 		model.load_state_dict(cp['state_dict'])
 		optimizer.load_state_dict(cp['optimizer'])
 	
-	
+	writer = SummaryWriter(os.path.join(Args.output_dir, Args.name))
+
 
 	for epoch in range(Args.epochs):
 		total_loss = 0.0
+		correct = 0 
 		for i, (data, target) in enumerate(dataset_loader):
 			
 			if cuda:
@@ -94,10 +100,19 @@ def train_model():
 			loss.backward()
 			optimizer.step()
 			total_loss += loss.item()
+			output_idx = output.argmax(dim=1, keepdim=True)
+			correct += output_idx.eq(target.view_as(output_idx)).sum().item()
 			print("Epoch: {} Minibatch:{} Loss: {}".format(epoch, i, loss.item()))
-			if i % Args.avg_loss_batch == 0 and i != 0:  #print loss after every 100 mini batches
-				print("Avg loss over last {} batches: {}".format(Args.avg_loss_batch, total_loss/Args.avg_loss_batch))
-				total_loss= 0.0
+			# if i % Args.avg_loss_batch == 0 and i != 0:  #print loss after every 100 mini batches
+			# 	print("Avg loss over last {} batches: {}".format(Args.avg_loss_batch, total_loss/Args.avg_loss_batch))
+			# 	total_loss= 0.0
+		avg_loss = total_loss/len(dataset_loader)
+		accuracy = correct / len(dataset_loader)
+		print("Average Loss Over {} Epochs: {}".format(epoch, avg_loss))
+		print("After Epoch: {}  Accuracy: {}".format(epoch, accuracy))
+		if Args.tensorboard:
+			writer.add_scalar("Loss/train", avg_loss, epoch)
+			writer.add_scalar("Accuracy/train", accuracy)
 
 		if Args.save_model!= None and epoch % Args.save_model==0:
 			name = os.path.join(Args.output_dir, Args.name, "fashion-"+str(epoch)+".pth")

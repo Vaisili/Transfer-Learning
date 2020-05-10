@@ -7,21 +7,22 @@ import os
 class Args:
 	# give a name to this task or a set of parameters
 	# models will be saved in this folder
-	name = "remainingclasses_loss_weight_sgd"
+	name = "top20classes_loss_weight_sgd"
 	batch_size = 16
 	data_dir = "D:\\Projects\\Datasets\\fashion-larger"
-	train_csv = "remainingclasses_set.csv"
-	learning_rate = 0.003
+	train_csv = "top20classes_set.csv"
+	learning_rate = 0.001
 	momentum = 0.9
-	epochs = 10
+	epochs = 25
+	optimizer = "sgd"
 	# checkpoint to start training from
 	# checkpoint = "D:\\Projects\\Datasets\\fashion-larger\\model_output\\fashion-9.pth"
 	checkpoint = None
 	# save model after every X epochs
-	save_model = 1
+	save_model = 5
 	output_dir = "D:\\Projects\\Datasets\\fashion-larger\\model_output"
 	base_model = "resnet50"
-	num_classes = 88  # top 20 classes
+	num_classes = 20  # top 20 classes
 	# calculate avg loss for X minibatches
 	avg_loss_batch = 100
 	oversample=False    #over sample to handle class imbalance
@@ -32,6 +33,7 @@ class Args:
 	weighted_loss_scheme = 2
 	# if True then only throws warning whenever possible
 	be_nice = False
+	tensorboard = True
 
 	def __init__(self):
 		self.verify_args()
