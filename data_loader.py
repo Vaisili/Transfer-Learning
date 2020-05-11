@@ -53,7 +53,7 @@ class FashionDataset(Dataset):
                 self.class_distribution[img_path['articleType']] += 1
         print("Found {} images in {} for provided csv file.".format(len(self.data), data_dir))
         print("Total classes: {}".format(len(self.label_map)))
-        print(self.label_map)
+        # print(self.label_map)
 
 
 
