@@ -51,13 +51,13 @@ def oversample(data):
 def train_model():
 
 	transforms_ = transforms.Compose([transforms.Resize((224,224)), transforms.ToTensor()])
-	data = FashionDataset(Args.data_dir, Args.train_csv, transform=transforms_)
+	data_cls = FashionDataset(Args.data_dir, Args.train_csv, transform=transforms_)
 	if Args.oversample:
 		print("Oversampling minority classes, this might take a while...")
-		sampler = oversample(data)
-		dataset_loader = torch.utils.data.DataLoader(dataset=data, batch_size=Args.batch_size, sampler=sampler)
+		sampler = oversample(data_cls)
+		dataset_loader = torch.utils.data.DataLoader(dataset=data_cls, batch_size=Args.batch_size, sampler=sampler)
 	else:
-		dataset_loader = torch.utils.data.DataLoader(dataset=data, batch_size=Args.batch_size, shuffle=True)
+		dataset_loader = torch.utils.data.DataLoader(dataset=data_cls, batch_size=Args.batch_size, shuffle=True)
 	cuda = torch.cuda.is_available()
 	model = ResNetFashion(base=Args.base_model, num_classes=Args.num_classes)
 
@@ -66,7 +66,7 @@ def train_model():
 		model.cuda()
 
 	if Args.weighted_loss and not Args.oversample:
-		weights = get_class_weights(data.label_map, data.class_distribution, Args.weighted_loss_scheme)
+		weights = get_class_weights(data_cls.label_map, data_cls.class_distribution, Args.weighted_loss_scheme)
 		class_weights = torch.FloatTensor(weights)
 		# if cuda:
 			# class_weight.to('cuda')
@@ -107,8 +107,8 @@ def train_model():
 			# if i % Args.avg_loss_batch == 0 and i != 0:  #print loss after every 100 mini batches
 			# 	print("Avg loss over last {} batches: {}".format(Args.avg_loss_batch, total_loss/Args.avg_loss_batch))
 			# 	total_loss= 0.0
-		avg_loss = total_loss/len(dataset_loader)
-		accuracy = correct / len(dataset_loader)
+		avg_loss = total_loss/len(data_cls)
+		accuracy = correct / len(data_cls)
 		print("Average Loss Over {} Epochs: {}".format(epoch, avg_loss))
 		print("After Epoch: {}  Accuracy: {}".format(epoch, accuracy))
 		if Args.tensorboard:
@@ -117,7 +117,7 @@ def train_model():
 
 		if Args.save_model!= None and epoch % Args.save_model==0:
 			name = os.path.join(Args.output_dir, Args.name, "fashion-"+str(epoch)+".pth")
-			save_model_fn(epoch, model, optimizer, name, data.label_map)
+			save_model_fn(epoch, model, optimizer, name, data_cls.label_map)
 
 
 if __name__ == "__main__":

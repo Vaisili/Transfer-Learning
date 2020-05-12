@@ -7,17 +7,18 @@ import os
 class Args:
 	# give a name to this task or a set of parameters
 	# models will be saved in this folder
-	name = "top20classes_loss_weight_sgd"
+	# name = "top20classes_loss_weight_sgd_moreepochs"
+	name="tempdelete"
 	batch_size = 16
 	data_dir = "D:\\Projects\\Datasets\\fashion-larger"
 	train_csv = "top20classes_set.csv"
-	learning_rate = 0.0007
+	learning_rate = 0.0001
 	momentum = 0.9
 	epochs = 5
 	optimizer = "sgd"
 	# checkpoint to start training from
-	# checkpoint = "D:\\Projects\\Datasets\\fashion-larger\\model_output\\fashion-9.pth"
-	checkpoint = None
+	checkpoint = "D:\\Projects\\Datasets\\fashion-larger\\model_output\\top20classes_loss_weight_sgd\\fashion-3.pth"
+	# checkpoint = None
 	# save model after every X epochs
 	save_model = 1
 	output_dir = "D:\\Projects\\Datasets\\fashion-larger\\model_output"
