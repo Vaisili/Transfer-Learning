@@ -65,14 +65,7 @@ def train_model():
 	if cuda:
 		model.cuda()
 
-	if Args.weighted_loss and not Args.oversample:
-		weights = get_class_weights(data_cls.label_map, data_cls.class_distribution, Args.weighted_loss_scheme)
-		class_weights = torch.FloatTensor(weights)
-		# if cuda:
-			# class_weight.to('cuda')
-		criterion = nn.CrossEntropyLoss(weight=class_weights.cuda())
-	else:
-		criterion = nn.CrossEntropyLoss()
+	
 	if Args.optimizer == "sgd":
 		optimizer = optim.SGD(model.parameters(), lr=Args.learning_rate, momentum=Args.momentum)  
 	elif Args.optimizer == "adam":
@@ -81,9 +74,36 @@ def train_model():
 	if Args.checkpoint != None:
 		print("restoring from checkpoint ", Args.checkpoint)
 		cp = torch.load(Args.checkpoint)
-		model.load_state_dict(cp['state_dict'])
-		optimizer.load_state_dict(cp['optimizer'])
+		# for n, v in cp['state_dict'].items():
+			# print(n)
+		if Args.diff_num_class:
+			print("Restoring weights except last layer")
+			model_dict = model.state_dict()
+			pretrained_dict = cp['state_dict']
+			# remove last two elements (fc weight and fc bias)
+			# filtered_dict = {k: v for k, v in pretrained_dict.items() if "fc" not in k}
+			pretrained_dict.popitem()
+			pretrained_dict.popitem()
+			model_dict.update(pretrained_dict)
+			model.load_state_dict(model_dict)
+		else:
+			print("Restoring weights for all layers")
+			model.load_state_dict(cp['state_dict'])
+			optimizer.load_state_dict(cp['optimizer'])
+		# if Args.num_class_finetune != None:
+		# 	num_features = model.fc.in_features
+		# 	model.fc = nn.Linear(num_features, Args.num_class_finetune).cuda()
+
 	
+	if Args.weighted_loss and not Args.oversample:
+		weights = get_class_weights(data_cls.label_map, data_cls.class_distribution, Args.weighted_loss_scheme)
+		class_weights = torch.FloatTensor(weights)
+		# if cuda:
+			# class_weight.to('cuda')
+		criterion = nn.CrossEntropyLoss(weight=class_weights.cuda())
+	else:
+		criterion = nn.CrossEntropyLoss()
+
 	writer = SummaryWriter(os.path.join(Args.output_dir, Args.name))
 
 

@@ -8,22 +8,25 @@ class Args:
 	# give a name to this task or a set of parameters
 	# models will be saved in this folder
 	# name = "top20classes_loss_weight_sgd_moreepochs"
-	name="tempdelete"
+	name="remainingclasses_loss_weight_sgd_moreepochs"
 	batch_size = 16
 	data_dir = "D:\\Projects\\Datasets\\fashion-larger"
-	train_csv = "top20classes_set.csv"
-	learning_rate = 0.0001
+	train_csv = "remainingclasses_set.csv"
+	learning_rate = 0.0007
 	momentum = 0.9
 	epochs = 5
 	optimizer = "sgd"
 	# checkpoint to start training from
-	checkpoint = "D:\\Projects\\Datasets\\fashion-larger\\model_output\\top20classes_loss_weight_sgd\\fashion-3.pth"
+	checkpoint = "D:\\Projects\\Datasets\\fashion-larger\\model_output\\remainingclasses_loss_weight_sgd\\fashion-4.pth"
 	# checkpoint = None
 	# save model after every X epochs
 	save_model = 1
 	output_dir = "D:\\Projects\\Datasets\\fashion-larger\\model_output"
 	base_model = "resnet50"
-	num_classes = 20  # top 20 classes
+	# num class for model
+	num_classes = 88  # top 20 classes
+	# num classes different than the pre-trained model (checkpoint)
+	diff_num_class = False    # default = False
 	# calculate avg loss for X minibatches
 	avg_loss_batch = 100
 	oversample=False    #over sample to handle class imbalance
