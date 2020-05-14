@@ -82,18 +82,18 @@ Sweaters             | 0.50          | 0.94
 Ring                 | 0.87          | 1.0
 Scarves              | 0.63          | 0.91 
 Earrings             | 1.0           | 1.0 
-Capris               | 0.73          | 1.0 
+Capris               | 0.73          | 0.98
 Skirts               | 0.66          | 0.92 
 Headband             | 1.0           | 1.0 
 Sports Sandals       | 0.9           | 1.0 
-Tights               | 1.0           | 1.0 
+Tights               | 0.0           | unk
 Travel Accessory     | 0.2           | 0.9 
 Gloves               | 1.0           | 1.0 
 Mobile Pouch         | 0.33          | 1.0 
 Wristbands           | 1.0           | 1.0 
 Stockings            | 0.29          | 0.88 
 Footballs            | 1.0           | 1.0
-Jumpsuit             | 0.1           | 1.0 
+Jumpsuit             | 1.0           | 1.0 
 Free Gifts           | 0.08          | 0.16 
 Necklace and Chains  | 0.92          | 1.0 
 Cufflinks            | 1.0           | 1.0 
@@ -112,8 +112,8 @@ Dupatta              | 0.5           | 1.0
 Water Bottle         | 1.0           | 1.0
 Makeup Remover       | 0.66          | 0.66
 Rain Trousers        | 1.0           | 1.0
-Waist Pouch          | 0.07          | 0.
-**Average**          |               |
+Waist Pouch          | 0.0           | unk
+**Average**          | 0.77          | 0.85
 
 ​
 ### Extension ###
