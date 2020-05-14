@@ -6,7 +6,7 @@ All the data exploration and preparation can be found in ```data_preparation.ipy
 
 ### Model ###
 
-We fintuned ResNet50 with different number of classes.
+We finetuned ResNet50 with different number of classes.
 
 
 ### Training ###
