@@ -1,4 +1,4 @@
-## Implementation of Transfer Learning and Few Shot Learning Methods ##
+## Study of Class Imbalance in Deep Learning ##
 
 ### Data Preparation ###
 
